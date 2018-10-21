@@ -133,12 +133,12 @@ void ai_move(void)
 	int node = -5;
 	for (int i = 0; i < current->child_cnt; ++i)
 	{
-		if (current->child[i].value == 1)
+		if (current->child[i].value == 1 && current->child[i].child_cnt == 0)
 		{
 			node = i;
 			break;
 		}
-		if (current->child[i].value == 0)
+		if (current->child[i].value >= 0)
 		{
 			node = i;
 		}
