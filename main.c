@@ -1,6 +1,3 @@
-//I DID NOT WRITE THE UI, ONLY THE AI
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -47,28 +44,25 @@ void build_children(NODE *parent, int level/*of children*/)
 	int tmp_ccnt = 0;
 	parent->child = (NODE*)malloc(sizeof(NODE) * (9-level));
 	parent->child_cnt = 9-level;
-	for (int y = 0; y < 3; ++y)
+	for (int i = 0; i < 9; ++i)
 	{
-		for (int x = 0; x < 3; ++x)
+		if (parent->matrix[i] == '_')
 		{
-			if (parent->matrix[y*3+x] == '_')
+			memcpy(parent->child[tmp_ccnt].matrix, parent->matrix, 9);
+			parent->child[tmp_ccnt].matrix[i] = (parent->player == 0) ? 'X' : 'O';
+			parent->child[tmp_ccnt].player = !parent->player;
+			if (isOver(parent->child[tmp_ccnt].matrix))
 			{
-				memcpy(parent->child[tmp_ccnt].matrix, parent->matrix, 9);
-				parent->child[tmp_ccnt].matrix[y*3+x] = (parent->player == 0) ? 'X' : 'O';
-				parent->child[tmp_ccnt].player = !parent->player;
-				if (isOver(parent->child[tmp_ccnt].matrix))
-				{
-					parent->child[tmp_ccnt].child = NULL;
-					parent->child[tmp_ccnt].child_cnt = 0;
-					if (parent->child[tmp_ccnt].player == glb_player)
-						parent->child[tmp_ccnt].value = 1;
-					else
-						parent->child[tmp_ccnt].value = -1;
-					++tmp_ccnt;
-				}
+				parent->child[tmp_ccnt].child = NULL;
+				parent->child[tmp_ccnt].child_cnt = 0;
+				if (parent->child[tmp_ccnt].player == glb_player)
+					parent->child[tmp_ccnt].value = 1;
 				else
-					build_children(&parent->child[tmp_ccnt++], level+1);
+					parent->child[tmp_ccnt].value = -1;
+				++tmp_ccnt;
 			}
+			else
+				build_children(&parent->child[tmp_ccnt++], level+1);
 		}
 	}
 	parent->value = (parent->player == glb_player) ? 5 : -5;
@@ -117,11 +111,8 @@ void init_tree(char player)
 	current = start;
 	if (player == 1)
 	{
-		for (int y = 0; y < 3; ++y)
-		{
-			for (int x = 0; x < 3; ++x)
-				start->matrix[y*3+x] = mat[y*3+x];
-		}
+		for (int i = 0; i < 9; ++i)
+			start->matrix[i] = mat[i];
 
 		build_children(start, 0);
 	}
@@ -320,5 +311,4 @@ unsigned char isOver(char *matrix){
 	}
 
 	return 0;
-
 }
